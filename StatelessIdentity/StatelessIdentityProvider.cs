@@ -29,7 +29,7 @@ namespace StatelessIdentity
 
             var user = provider.GetUser(context);
 
-            return new Identity(providerGuid, user);
+            return new Identity(user);
         }
     }
 }
