@@ -11,7 +11,7 @@ namespace StatelessIdentity.UserProviders.Guid
             return new User
             {
                 ExternalId = System.Guid.NewGuid().ToString(),
-                Username = System.Guid.NewGuid().ToString(),
+                Name = System.Guid.NewGuid().ToString(),
             };
         }
     }
