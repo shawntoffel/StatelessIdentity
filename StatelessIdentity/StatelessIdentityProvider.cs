@@ -5,21 +5,21 @@ using System.Collections.Generic;
 
 namespace StatelessIdentity
 {
-    public class StatelessIdentity
+    public class StatelessIdentityProvider
     {
         private readonly Dictionary<Guid, IUserProvider> _providers;
 
-        public StatelessIdentity()
+        public StatelessIdentityProvider()
         {
             _providers = new Dictionary<Guid, IUserProvider>();
         }
 
-        public void RegisterUserProvidier(IUserProvider provider)
+        public void RegisterUserProvider(IUserProvider provider)
         {
             _providers.Add(provider.Id, provider);
         }
 
-        public Identity Create(AuthorizationContext context)
+        public Identity CreateIdentity(AuthorizationContext context)
         {
             var providerGuid = context.ProviderIdAsGuid();
 
@@ -30,11 +30,6 @@ namespace StatelessIdentity
             var user = provider.GetUser(context);
 
             return new Identity(providerGuid, user);
-        }
-
-        public Identity FromToken(string token)
-        {
-            return new Identity(Guid.NewGuid(), null);
         }
     }
 }

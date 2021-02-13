@@ -24,7 +24,7 @@ namespace StatelessIdentity.Domain
             return "";
         }
 
-        private string GetHash()
+        public string GetHash()
         {
             return  ComputeBase64Hash(ProviderId.ToString() + User.ExternalId);
         }
@@ -35,6 +35,11 @@ namespace StatelessIdentity.Domain
             var bytes = Encoding.ASCII.GetBytes(input);
             var hash = sha512Managed.ComputeHash(bytes);
             return Convert.ToBase64String(hash);
+        }
+
+        public static Identity Parse(string token)
+        {
+            return new Identity(Guid.NewGuid(), null);
         }
     }
 }
