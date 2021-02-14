@@ -4,9 +4,9 @@ using System.Text;
 
 namespace StatelessIdentity.Domain.Extensions
 {
-    public static class HashingExtensions
+    internal static class HashingExtensions
     {
-        public static  byte[] ComputeHash(string input)
+        internal static  byte[] ComputeHash(string input)
         {
             using var sha512Managed = new SHA512Managed();
 
@@ -14,7 +14,7 @@ namespace StatelessIdentity.Domain.Extensions
             return sha512Managed.ComputeHash(bytes);
         }
 
-        public static string ComputeBase64Hash(string input)
+        internal static string ComputeBase64Hash(string input)
         {
             var hash = ComputeHash(input);
             return Convert.ToBase64String(hash);

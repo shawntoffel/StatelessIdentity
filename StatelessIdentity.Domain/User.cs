@@ -1,7 +1,7 @@
-﻿using System;
+﻿using StatelessIdentity.Domain.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using StatelessIdentity.Domain.Extensions;
 
 namespace StatelessIdentity.Domain
 {
@@ -24,6 +24,9 @@ namespace StatelessIdentity.Domain
             Data = new Dictionary<string, string>();
         }
 
+        /// <summary>
+        /// Computes a base64 encoded hash of the concatenated ProviderId and ExternalId.
+        /// </summary>
         public string GetBase64Hash()
         {
             return HashingExtensions.ComputeBase64Hash(ProviderId.ToString() + ExternalId);

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace StatelessIdentity
 {
-    public class StatelessIdentityProvider
+    public class StatelessIdentityProvider : IStatelessIdentityProvider
     {
         private readonly Dictionary<Guid, IUserProvider> _providers;
 
@@ -21,7 +21,7 @@ namespace StatelessIdentity
 
         public Identity CreateIdentity(AuthorizationContext context)
         {
-            var providerGuid = context.ProviderIdAsGuid();
+            var providerGuid = Guid.Parse(context.ProviderId);
 
             var found = _providers.TryGetValue(providerGuid, out IUserProvider provider);
             if (!found)
