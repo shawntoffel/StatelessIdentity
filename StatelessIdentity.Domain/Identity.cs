@@ -25,12 +25,13 @@ namespace StatelessIdentity.Domain
             User = user;
         }
 
-        private Identity(JwtSecurityToken jwtSecurityToken, TokenOptions tokenOptions = null)
+        private Identity(JwtSecurityToken jwtSecurityToken, TokenOptions tokenOptions)
         {
             if (jwtSecurityToken == null)
                 throw new ArgumentNullException(nameof(jwtSecurityToken));
 
-            tokenOptions ??= new TokenOptions();
+            if (tokenOptions == null)
+                throw new ArgumentNullException(nameof(tokenOptions));
 
             Id = jwtSecurityToken.Claims.ValueOrDefault(JwtClaimTypes.Id, Guid.Parse);
             User = jwtSecurityToken.Claims.ValueOrDefault(JwtClaimTypes.User, (s) => JsonSerializer.Deserialize<User>(s, tokenOptions.JsonSerializerOptions));
@@ -110,6 +111,8 @@ namespace StatelessIdentity.Domain
             claimsIdentity.AddUnlessEmpty(JwtRegisteredClaimNames.Iss, tokenOptions.Issuer);
             claimsIdentity.AddUnlessEmpty(JwtRegisteredClaimNames.Aud, tokenOptions.Audience);
 
+            securityTokenDescriptor.Subject = claimsIdentity;
+
             var tokenHandler = new JwtSecurityTokenHandler();
             return tokenHandler.CreateEncodedJwt(securityTokenDescriptor);
         }
@@ -164,7 +167,7 @@ namespace StatelessIdentity.Domain
                 ValidAudience = tokenOptions.Audience
             };
 
-            return Parse(token, tokenValidationParameters);
+            return Parse(token, tokenValidationParameters, tokenOptions);
         }
 
         /// <summary>
@@ -177,6 +180,8 @@ namespace StatelessIdentity.Domain
         {
             if (tokenValidationParameters == null)
                 throw new ArgumentNullException(nameof(tokenValidationParameters));
+
+            tokenOptions ??= new TokenOptions();
 
             try
             {
