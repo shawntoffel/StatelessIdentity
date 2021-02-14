@@ -10,6 +10,7 @@ namespace StatelessIdentity.UserProviders.Guid
         {
             return new User
             {
+                ProviderId = Id,
                 ExternalId = System.Guid.NewGuid().ToString(),
                 Name = System.Guid.NewGuid().ToString(),
             };
