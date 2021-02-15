@@ -2,6 +2,7 @@
 using StatelessIdentity.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace StatelessIdentity
 {
@@ -27,7 +28,10 @@ namespace StatelessIdentity
             if (!found)
                 throw new UnknownUserProviderException(context.ProviderId);
 
-            var user = provider.GetUser(context);
+            var task = provider.GetUserAsync(context);
+            task.Wait();
+
+            var user = task.Result;
 
             return new Identity(user);
         }

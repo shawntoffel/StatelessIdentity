@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace StatelessIdentity.Domain
 {
@@ -13,6 +14,6 @@ namespace StatelessIdentity.Domain
         /// Exchanges the AuthorizationContext for a User.
         /// </summary>
         /// <param name="authorizationContext"></param>
-        User GetUser(AuthorizationContext authorizationContext);
+        Task<User> GetUserAsync(AuthorizationContext authorizationContext);
     }
 }
