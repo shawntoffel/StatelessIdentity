@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace StatelessIdentity.UserProviders.Discord
+namespace StatelessIdentity.UserProviders.Discord.RestClient
 {
     public static class Defaults
     {

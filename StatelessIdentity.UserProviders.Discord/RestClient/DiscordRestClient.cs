@@ -1,12 +1,13 @@
-﻿using StatelessIdentity.UserProviders.Discord.Models;
+﻿using StatelessIdentity.UserProviders.Discord.RestClient.Models;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace StatelessIdentity.UserProviders.Discord
+namespace StatelessIdentity.UserProviders.Discord.RestClient
 {
     internal class DiscordRestClient
     {
@@ -45,6 +46,10 @@ namespace StatelessIdentity.UserProviders.Discord
             content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
             var response = await _httpClient.PostAsync(Defaults.TokenUrl, content);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                throw new Exception();
+
             var responseContent = await response.Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<TokenResponse>(responseContent);
