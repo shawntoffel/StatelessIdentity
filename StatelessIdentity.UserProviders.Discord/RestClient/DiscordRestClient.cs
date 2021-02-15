@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StatelessIdentity.UserProviders.Discord.RestClient
 {
-    internal class DiscordRestClient
+    public class DiscordRestClient : IDiscordRestClient
     {
         private readonly HttpClient _httpClient;
         private readonly DiscordUserProviderOptions _discordUserProviderOptions;

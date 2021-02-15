@@ -2,7 +2,7 @@
 
 namespace StatelessIdentity.UserProviders.Discord.RestClient.Models
 {
-    internal class UserResponse
+    public class UserResponse
     {
         [JsonPropertyName("id")]
         public string Id { get; set; }

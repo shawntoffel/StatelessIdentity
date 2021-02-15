@@ -11,7 +11,7 @@ namespace StatelessIdentity.UserProviders.Discord
     {
         public Guid Id => Guid.Parse("9a69aba6-d0b2-4e35-886e-de54e7c7a307");
 
-        private readonly DiscordRestClient _restClient;
+        private readonly IDiscordRestClient _restClient;
 
         public DiscordUserProvider(DiscordUserProviderOptions options)
         {
@@ -21,6 +21,11 @@ namespace StatelessIdentity.UserProviders.Discord
         public DiscordUserProvider(DiscordUserProviderOptions options, HttpClient httpClient)
         {
             _restClient = new DiscordRestClient(options, httpClient);
+        }
+
+        public DiscordUserProvider(DiscordUserProviderOptions options, IDiscordRestClient restClient)
+        {
+            _restClient = restClient;
         }
 
         public async Task<User> GetUserAsync(AuthorizationContext authorizationContext)

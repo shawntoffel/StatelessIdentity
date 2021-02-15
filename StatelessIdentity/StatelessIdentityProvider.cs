@@ -2,7 +2,6 @@
 using StatelessIdentity.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace StatelessIdentity
 {
