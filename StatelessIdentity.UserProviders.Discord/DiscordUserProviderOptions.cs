@@ -9,7 +9,7 @@ namespace StatelessIdentity.UserProviders.Discord
         public string RedirectUri { get; set; }
         public string Scope { get; set; }
 
-        public  DiscordUserProviderOptions()
+        public DiscordUserProviderOptions()
         {
             Scope = "identify";
         }

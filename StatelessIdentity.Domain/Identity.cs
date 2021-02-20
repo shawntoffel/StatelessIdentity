@@ -33,8 +33,8 @@ namespace StatelessIdentity.Domain
             if (tokenOptions == null)
                 throw new ArgumentNullException(nameof(tokenOptions));
 
-            Id = jwtSecurityToken.Claims.ValueOrDefault(JwtClaimTypes.Id, Guid.Parse);
-            User = jwtSecurityToken.Claims.ValueOrDefault(JwtClaimTypes.User, (s) => JsonSerializer.Deserialize<User>(s, tokenOptions.JsonSerializerOptions));
+            Id = jwtSecurityToken.Claims.ValueOrDefault(JwtClaimNames.Id, Guid.Parse);
+            User = jwtSecurityToken.Claims.ValueOrDefault(JwtClaimNames.User, (s) => JsonSerializer.Deserialize<User>(s, tokenOptions.JsonSerializerOptions));
         }
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace StatelessIdentity.Domain
             tokenOptions ??= new TokenOptions();
 
             var claimsIdentity = securityTokenDescriptor.Subject ?? new ClaimsIdentity();
-            claimsIdentity.AddUnlessEmpty(JwtClaimTypes.Id, Id);
-            claimsIdentity.AddUnlessEmpty(JwtClaimTypes.User, JsonSerializer.Serialize(User, tokenOptions.JsonSerializerOptions));
+            claimsIdentity.AddUnlessEmpty(JwtClaimNames.Id, Id);
+            claimsIdentity.AddUnlessEmpty(JwtClaimNames.User, JsonSerializer.Serialize(User, tokenOptions.JsonSerializerOptions));
             claimsIdentity.AddUnlessEmpty(JwtRegisteredClaimNames.Iss, tokenOptions.Issuer);
             claimsIdentity.AddUnlessEmpty(JwtRegisteredClaimNames.Aud, tokenOptions.Audience);
 
