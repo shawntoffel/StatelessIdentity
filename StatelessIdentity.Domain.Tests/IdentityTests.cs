@@ -28,7 +28,7 @@ namespace StatelessIdentity.Domain.Tests
 
             var parsedIdentity = Identity.Parse(token, SymmetricKey);
             Assert.AreEqual(identity.Id, parsedIdentity.Id);
-            Assert.AreEqual(identity.User.Hash, parsedIdentity.User.Hash);
+            Assert.AreEqual(identity.User.Digest, parsedIdentity.User.Digest);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace StatelessIdentity.Domain.Tests
 
             var parsedIdentity = Identity.Parse(token, AsymmetricKey);
             Assert.AreEqual(identity.Id, parsedIdentity.Id);
-            Assert.AreEqual(identity.User.Hash, parsedIdentity.User.Hash);
+            Assert.AreEqual(identity.User.Digest, parsedIdentity.User.Digest);
         }
 
         [Test]

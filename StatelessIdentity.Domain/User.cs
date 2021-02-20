@@ -6,23 +6,20 @@ namespace StatelessIdentity.Domain
 {
     public class User
     {
-        [JsonPropertyName("h")]
-        public string Hash { get; set; }
+        [JsonPropertyName("digest")]
+        public string Digest { get; set; }
 
-        [JsonPropertyName("n")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonPropertyName("d")]
+        [JsonPropertyName("data")]
         public IDictionary<string, string> Data { get; set; }
         
-        internal User()
-        {
-            Data = new Dictionary<string, string>();
-        }
+        public User() { }
 
-        public User(string provider, string externalId) : this()
+        public User(string provider, string externalId)
         {
-            Hash = HashingExtensions.ComputeSHA512Base64Hash(provider + externalId);
+            Digest = HashingExtensions.ComputeSHA512Base64Hash(provider + externalId);
         }
 
         public string GetData(string key)

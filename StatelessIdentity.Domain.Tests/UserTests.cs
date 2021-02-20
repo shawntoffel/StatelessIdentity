@@ -14,7 +14,7 @@ namespace StatelessIdentity.Domain.Tests
         {
             var user = new User(Guid.Parse(provider).ToString(), externalId);
 
-            Assert.AreEqual(expectedHash, user.Hash);
+            Assert.AreEqual(expectedHash, user.Digest);
         }
     }
 }

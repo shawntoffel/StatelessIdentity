@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace StatelessIdentity.UserProviders.Discord
+﻿namespace StatelessIdentity.UserProviders.Discord
 {
     public class DiscordUserProviderOptions
     {
