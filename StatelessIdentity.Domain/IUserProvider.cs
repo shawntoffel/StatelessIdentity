@@ -1,14 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace StatelessIdentity.Domain
 {
     public interface IUserProvider
     {
         /// <summary>
-        /// A unique Guid assigned to this provider.
+        /// A unique name assigned to this provider.
         /// </summary>
-        Guid Id { get; }
+        string Name { get; }
 
         /// <summary>
         /// Exchanges the AuthorizationContext for a User.

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Security.Cryptography;
-using Microsoft.IdentityModel.Logging;
+﻿using Microsoft.IdentityModel.Logging;
 using NUnit.Framework;
 using StatelessIdentity.Domain.Exceptions;
+using System.Security.Cryptography;
 
 namespace StatelessIdentity.Domain.Tests
 {
@@ -21,30 +20,21 @@ namespace StatelessIdentity.Domain.Tests
         [Test]
         public void TestCreateAndParseTokenSymmetricKey()
         {
-            var user = new User() {
-                ProviderId = Guid.Parse("b01c16bb-f15e-444a-a300-0a2e22f757a7"),
-                ExternalId = "externalId"
-            };
-
+            var user = new User("provider", "externalId");
             var identity = new Identity(user);
 
             var token = identity.Token(SymmetricKey);
             Assert.NotNull(token);
 
             var parsedIdentity = Identity.Parse(token, SymmetricKey);
-            Assert.AreEqual(parsedIdentity.Id, identity.Id);
-            Assert.AreEqual(parsedIdentity.User.ProviderId, identity.User.ProviderId);
-            Assert.AreEqual(parsedIdentity.User.ExternalId, identity.User.ExternalId);
+            Assert.AreEqual(identity.Id, parsedIdentity.Id);
+            Assert.AreEqual(identity.User.Hash, parsedIdentity.User.Hash);
         }
 
         [Test]
         public void TestCreateAndParseTokenAsymmetricKey()
         {
-            var user = new User()
-            {
-                ProviderId = Guid.Parse("b01c16bb-f15e-444a-a300-0a2e22f757a7"),
-                ExternalId = "externalId"
-            };
+            var user = new User("provider", "externalId");
 
             var identity = new Identity(user);
 
@@ -52,15 +42,14 @@ namespace StatelessIdentity.Domain.Tests
             Assert.NotNull(token);
 
             var parsedIdentity = Identity.Parse(token, AsymmetricKey);
-            Assert.AreEqual(parsedIdentity.Id, identity.Id);
-            Assert.AreEqual(parsedIdentity.User.ProviderId, identity.User.ProviderId);
-            Assert.AreEqual(parsedIdentity.User.ExternalId, identity.User.ExternalId);
+            Assert.AreEqual(identity.Id, parsedIdentity.Id);
+            Assert.AreEqual(identity.User.Hash, parsedIdentity.User.Hash);
         }
 
         [Test]
         public void TestSymmetricKeyCreate_SmallKey_ThrowsException()
         {
-            var identity = new Identity(new User());
+            var identity = new Identity(new User("provider", "externalId"));
             Assert.Throws<TokenException>(() => identity.Token("test"));
         }
     }

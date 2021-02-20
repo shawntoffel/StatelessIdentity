@@ -9,7 +9,7 @@ namespace StatelessIdentity.UserProviders.Discord
 {
     public class DiscordUserProvider : IUserProvider
     {
-        public Guid Id => Guid.Parse("9a69aba6-d0b2-4e35-886e-de54e7c7a307");
+        public string Name => nameof(DiscordUserProvider);
 
         private readonly IDiscordRestClient _restClient;
 
@@ -30,15 +30,16 @@ namespace StatelessIdentity.UserProviders.Discord
 
         public async Task<User> GetUserAsync(AuthorizationContext authorizationContext)
         {
+            if (authorizationContext == null)
+                throw new ArgumentNullException(nameof(authorizationContext));
+
             var code = authorizationContext.GetData("code");
 
             var token = await _restClient.ExchangeCode(code);
             var userResponse = await _restClient.GetUser(token.AccessToken);
 
-            return new User()
+            return new User(Name, userResponse.Id)
             {
-                ProviderId = Id,
-                ExternalId = userResponse.Id,
                 Name = userResponse.Username,
                 Data = new Dictionary<string, string>()
                 {

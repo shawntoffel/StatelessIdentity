@@ -7,25 +7,29 @@ namespace StatelessIdentity
 {
     public class StatelessIdentityProvider : IStatelessIdentityProvider
     {
-        private readonly Dictionary<Guid, IUserProvider> _providers;
+        private readonly Dictionary<string, IUserProvider> _providers;
 
         public StatelessIdentityProvider()
         {
-            _providers = new Dictionary<Guid, IUserProvider>();
+            _providers = new Dictionary<string, IUserProvider>();
         }
 
         public void RegisterUserProvider(IUserProvider provider)
         {
-            _providers.Add(provider.Id, provider);
+            _providers.Add(provider.Name, provider);
         }
 
         public Identity CreateIdentity(AuthorizationContext context)
         {
-            var providerGuid = Guid.Parse(context.ProviderId);
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
-            var found = _providers.TryGetValue(providerGuid, out IUserProvider provider);
+            if (string.IsNullOrEmpty(context.Provider))
+                throw new UnknownUserProviderException(context.Provider);
+
+            var found = _providers.TryGetValue(context.Provider, out IUserProvider provider);
             if (!found)
-                throw new UnknownUserProviderException(context.ProviderId);
+                throw new UnknownUserProviderException(context.Provider);
 
             var task = provider.GetUserAsync(context);
             task.Wait();

@@ -42,7 +42,7 @@ namespace StatelessIdentity.UserProviders.Discord.Tests
         {
             var auth = new AuthorizationContext()
             {
-                ProviderId = _userProvider.Id.ToString(),
+                Provider = _userProvider.Name,
                 Data = new Dictionary<string, string>()
                 {
                     {"code", "test"}
@@ -51,15 +51,12 @@ namespace StatelessIdentity.UserProviders.Discord.Tests
 
             var identity = _statelessIdentityProvider.CreateIdentity(auth);
             Assert.NotNull(identity?.User);
-
-            Assert.AreEqual(identity.User.ProviderId, _userProvider.Id);
-            Assert.AreEqual(identity.User.ExternalId, _defaultUserResponse.Id);
-            Assert.AreEqual(identity.User.Name, _defaultUserResponse.Username);
+            Assert.AreEqual(_defaultUserResponse.Username, identity.User.Name);
 
             var data = identity.User?.Data;
             Assert.NotNull(data);
             Assert.IsTrue(data.ContainsKey("avatarUrl"));
-            Assert.AreEqual(data["avatarUrl"], _defaultUserResponse.GetAvatarUrl());
+            Assert.AreEqual(_defaultUserResponse.GetAvatarUrl(), data["avatarUrl"]);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-namespace StatelessIdentity.Domain.Constants
+﻿namespace StatelessIdentity.Domain.Constants
 {
     public static class JwtClaimTypes
     {

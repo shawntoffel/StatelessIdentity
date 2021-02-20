@@ -17,7 +17,7 @@ namespace StatelessIdentity.UserProviders.Discord.Tests
 
             var expected = $"https://cdn.discordapp.com/avatars/{userResponse.Id}/{userResponse.Avatar}.png";
 
-            Assert.AreEqual(userResponse.GetAvatarUrl(), expected);
+            Assert.AreEqual(expected, userResponse.GetAvatarUrl());
         }
     }
 }

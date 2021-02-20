@@ -18,10 +18,10 @@ namespace IdentitySession.Tests
 
             var identity = sip.CreateIdentity(new AuthorizationContext()
             {
-                ProviderId = guidProvider.Id.ToString()
+                Provider = guidProvider.Name
             });
 
-            Assert.AreEqual(identity.User.ProviderId, guidProvider.Id);
+            Assert.NotNull(identity?.User);
         }
     }
 }

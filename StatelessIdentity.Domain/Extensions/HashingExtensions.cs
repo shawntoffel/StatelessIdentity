@@ -6,7 +6,7 @@ namespace StatelessIdentity.Domain.Extensions
 {
     internal static class HashingExtensions
     {
-        internal static  byte[] ComputeHash(string input)
+        internal static  byte[] ComputeSHA512Hash(string input)
         {
             using var sha512Managed = new SHA512Managed();
 
@@ -14,9 +14,9 @@ namespace StatelessIdentity.Domain.Extensions
             return sha512Managed.ComputeHash(bytes);
         }
 
-        internal static string ComputeBase64Hash(string input)
+        internal static string ComputeSHA512Base64Hash(string input)
         {
-            var hash = ComputeHash(input);
+            var hash = ComputeSHA512Hash(input);
             return Convert.ToBase64String(hash);
         }
     }

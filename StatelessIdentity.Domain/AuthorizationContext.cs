@@ -4,11 +4,11 @@ namespace StatelessIdentity.Domain
 {
     public class AuthorizationContext
     {
-        public string ProviderId { get; set; }
+        public string Provider { get; set; }
 
         public IDictionary<string, string> Data { get; set; }
 
-        public AuthorizationContext()
+        public AuthorizationContext() 
         {
             Data = new Dictionary<string, string>();
         }
