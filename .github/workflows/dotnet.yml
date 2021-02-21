@@ -3,6 +3,7 @@ name: .NET
 on:
   push:
     branches: '*'
+    tags: '*'
   pull_request:
     branches: [ master ]
 
@@ -23,3 +24,10 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Pack
+      run: dotnet pack -c Release -p:Version=${GITHUB_REF#refs/*/} -o out
+      if: startsWith(github.ref, 'refs/tags/')
+    - name: Push
+      run: dotnet nuget push out/**/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}}
+      if: startsWith(github.ref, 'refs/tags/')
+      
