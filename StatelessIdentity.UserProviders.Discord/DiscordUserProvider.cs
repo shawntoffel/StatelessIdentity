@@ -36,7 +36,7 @@ namespace StatelessIdentity.UserProviders.Discord
             var code = authorizationContext.GetData("code");
 
             var token = await _restClient.ExchangeCode(code);
-            var userResponse = await _restClient.GetUser(token.AccessToken);
+            var userResponse = await _restClient.GetUser(token?.AccessToken);
 
             return new User(Name, userResponse.Id)
             {

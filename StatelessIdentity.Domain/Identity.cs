@@ -5,16 +5,12 @@ using StatelessIdentity.Domain.Extensions;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 
 namespace StatelessIdentity.Domain
 {
     public class Identity
     {
-        private const int MinSymmetricKeyBytes = 16;
-
         public Guid Id { get; }
 
         public User User { get; set; }
@@ -38,55 +34,20 @@ namespace StatelessIdentity.Domain
         }
 
         /// <summary>
-        /// Create a token using a symmetric security key.
+        /// Create a token.
         /// </summary>
-        /// <param name="key"></param>
         /// <param name="tokenOptions"></param>
-        public string Token(string key, TokenOptions tokenOptions = null)
+        public string Token(TokenOptions tokenOptions)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            var bytes = Encoding.UTF8.GetBytes(key);
-            if (bytes.Length < MinSymmetricKeyBytes)
-                throw new TokenException($"Symmetric key length must be greater than {MinSymmetricKeyBytes} bytes");
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
-
-            return Token(signingCredentials, tokenOptions);
-        }
-
-        /// <summary>
-        /// Create a token using an asymmetric security key.
-        /// </summary>
-        /// <param name="rsa"></param>
-        /// <param name="tokenOptions"></param>
-        public string Token(RSA rsa, TokenOptions tokenOptions = null)
-        {
-            if (rsa == null)
-                throw new ArgumentNullException(nameof(rsa));
-
-            var securityKey = new RsaSecurityKey(rsa);
-            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512Signature);
-
-            return Token(signingCredentials, tokenOptions);
-        }
-
-        /// <summary>
-        /// Create a token using the provided SigningCredentials.
-        /// </summary>
-        /// <param name="signingCredentials"></param>
-        /// <param name="tokenOptions"></param>
-        public string Token(SigningCredentials signingCredentials, TokenOptions tokenOptions = null)
-        {
-            tokenOptions ??= new TokenOptions();
+            if (tokenOptions == null)
+                throw new ArgumentNullException(nameof(tokenOptions));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(),
                 Expires = DateTime.UtcNow.Add(tokenOptions.ExpirationTimeSpan),
-                SigningCredentials = signingCredentials
+                SigningCredentials = tokenOptions.SigningCredentials,
+                EncryptingCredentials = tokenOptions.EncryptingCredentials
             };
 
             return Token(tokenDescriptor, tokenOptions);
@@ -118,53 +79,21 @@ namespace StatelessIdentity.Domain
         }
 
         /// <summary>
-        /// Parse a token using a symmetric security key.
+        /// Parse a token.
         /// </summary>
         /// <param name="token"></param>
-        /// <param name="key"></param>
         /// <param name="tokenOptions"></param>
-        public static Identity Parse(string token, string key, TokenOptions tokenOptions = null)
-        {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-
-            return Parse(token, securityKey, tokenOptions);
-        }
-
-        /// <summary>
-        /// Parse a token using an asymmetric security key.
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="rsa"></param>
-        /// <param name="tokenOptions"></param>
-        public static Identity Parse(string token, RSA rsa, TokenOptions tokenOptions = null)
-        {
-            if (rsa == null)
-                throw new ArgumentNullException(nameof(rsa));
-
-            var securityKey = new RsaSecurityKey(rsa);
-
-            return Parse(token, securityKey, tokenOptions);
-        }
-
-        /// <summary>
-        /// Parse a token using the provided SecurityKey.
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="securityKey"></param>
-        /// <param name="tokenOptions"></param>
-        public static Identity Parse(string token, SecurityKey securityKey, TokenOptions tokenOptions = null)
+        public static Identity Parse(string token, TokenOptions tokenOptions = null)
         {
             tokenOptions ??= new TokenOptions();
 
             var tokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = securityKey,
+                IssuerSigningKey = tokenOptions.SigningCredentials?.Key,
                 ValidIssuer = tokenOptions.Issuer,
-                ValidAudience = tokenOptions.Audience
+                ValidAudience = tokenOptions.Audience,
+                TokenDecryptionKey = tokenOptions.EncryptingCredentials?.Key
             };
 
             return Parse(token, tokenValidationParameters, tokenOptions);

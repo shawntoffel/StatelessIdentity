@@ -1,4 +1,5 @@
-﻿using StatelessIdentity.UserProviders.Discord.RestClient.Models;
+﻿using StatelessIdentity.Domain.Exceptions;
+using StatelessIdentity.UserProviders.Discord.RestClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -41,16 +42,14 @@ namespace StatelessIdentity.UserProviders.Discord.RestClient
                 {"scope", _discordUserProviderOptions.Scope},
             };
 
-            using var content = new FormUrlEncodedContent(body);
-            content.Headers.Clear();
-            content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            using var httpContent = new FormUrlEncodedContent(body);
+            httpContent.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-            var response = await _httpClient.PostAsync(Defaults.TokenUrl, content);
+            var response = await _httpClient.PostAsync(Defaults.TokenUrl, httpContent);
+            var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception();
-
-            var responseContent = await response.Content.ReadAsStringAsync();
+                throw new UserProviderException(response.StatusCode, responseContent);
 
             return JsonSerializer.Deserialize<TokenResponse>(responseContent);
         }
@@ -65,10 +64,13 @@ namespace StatelessIdentity.UserProviders.Discord.RestClient
 
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            var userResp = await _httpClient.SendAsync(requestMessage);
-            var userRespContent = await userResp.Content.ReadAsStringAsync();
+            var response = await _httpClient.SendAsync(requestMessage);
+            var responseContent = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<UserResponse>(userRespContent);
+            if (response.StatusCode != HttpStatusCode.OK)
+                throw new UserProviderException(response.StatusCode, responseContent);
+
+            return JsonSerializer.Deserialize<UserResponse>(responseContent);
         }
     }
 }
