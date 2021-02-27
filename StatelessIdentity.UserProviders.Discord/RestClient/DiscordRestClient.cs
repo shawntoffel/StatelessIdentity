@@ -43,6 +43,7 @@ namespace StatelessIdentity.UserProviders.Discord.RestClient
             };
 
             using var httpContent = new FormUrlEncodedContent(body);
+            httpContent.Headers.Clear();
             httpContent.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
             var response = await _httpClient.PostAsync(Defaults.TokenUrl, httpContent);
