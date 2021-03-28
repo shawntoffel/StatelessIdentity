@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using StatelessIdentity.Domain;
@@ -5,6 +6,8 @@ using StatelessIdentity.UserProviders.Discord.RestClient;
 using StatelessIdentity.UserProviders.Discord.RestClient.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace StatelessIdentity.UserProviders.Discord.Tests
 {
@@ -14,7 +17,6 @@ namespace StatelessIdentity.UserProviders.Discord.Tests
         private Mock<IDiscordRestClient> _mockDiscordRestClient;
         private IUserProvider _userProvider;
         private IStatelessIdentityProvider _statelessIdentityProvider;
-
 
         [SetUp]
         public void Setup()
@@ -32,7 +34,7 @@ namespace StatelessIdentity.UserProviders.Discord.Tests
             _mockDiscordRestClient.Setup(m => m.GetUser(It.IsAny<string>())).Returns(Task.FromResult(_defaultUserResponse));
 
             var discordOpts = new DiscordUserProviderOptions();
-            _userProvider = new DiscordUserProvider(discordOpts, _mockDiscordRestClient.Object);
+            _userProvider = new DiscordUserProvider(_mockDiscordRestClient.Object);
             _statelessIdentityProvider = new StatelessIdentityProvider();
             _statelessIdentityProvider.RegisterUserProvider(_userProvider);
         }
@@ -57,6 +59,31 @@ namespace StatelessIdentity.UserProviders.Discord.Tests
             Assert.NotNull(data);
             Assert.IsTrue(data.ContainsKey("avatarUrl"));
             Assert.AreEqual(_defaultUserResponse.GetAvatarUrl(), data["avatarUrl"]);
+        }
+
+        [Test]
+        public void TestDependencyInjection()
+        {
+            const string expectedClientId = "clientId";
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>()
+                {
+                    {DiscordUserProviderOptions.ConfigurationSection + ":ClientId", expectedClientId}
+                })
+                .Build();
+
+            var serviceProvider = new ServiceCollection()
+                .AddOptions()
+                .Configure<DiscordUserProviderOptions>((s) => configuration.GetSection(DiscordUserProviderOptions.ConfigurationSection).Bind(s))
+                .AddTransient<IUserProvider, DiscordUserProvider>()
+                .BuildServiceProvider();
+
+            var options = serviceProvider.GetService<IOptions<DiscordUserProviderOptions>>();
+            Assert.AreEqual(expectedClientId, options.Value.ClientId);
+
+            var userProvider = serviceProvider.GetService<IUserProvider>();
+            Assert.NotNull(userProvider);
         }
     }
 }

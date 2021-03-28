@@ -4,11 +4,11 @@ namespace StatelessIdentity.Domain.Exceptions
 {
     public class UnknownUserProviderException : Exception
     {
-        public string UnsupportedProviderName { get; set; }
+        public string UnknownUserProviderName { get; set; }
 
-        public UnknownUserProviderException(string unsupportedProviderName) : base($"User provider with id '{unsupportedProviderName}' is not registered")
+        public UnknownUserProviderException(string unknownUserProviderName) : base($"User provider with name '{unknownUserProviderName}' is not registered")
         {
-            UnsupportedProviderName = unsupportedProviderName;
+            UnknownUserProviderName = unknownUserProviderName;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using StatelessIdentity.Domain;
+﻿using Microsoft.Extensions.Options;
+using StatelessIdentity.Domain;
 using StatelessIdentity.UserProviders.Discord.RestClient;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace StatelessIdentity.UserProviders.Discord
@@ -18,12 +18,9 @@ namespace StatelessIdentity.UserProviders.Discord
             _restClient = new DiscordRestClient(options);
         }
 
-        public DiscordUserProvider(DiscordUserProviderOptions options, HttpClient httpClient)
-        {
-            _restClient = new DiscordRestClient(options, httpClient);
-        }
+        public DiscordUserProvider(IOptions<DiscordUserProviderOptions> options) : this(options.Value) { }
 
-        public DiscordUserProvider(DiscordUserProviderOptions options, IDiscordRestClient restClient)
+        public DiscordUserProvider(IDiscordRestClient restClient)
         {
             _restClient = restClient;
         }
