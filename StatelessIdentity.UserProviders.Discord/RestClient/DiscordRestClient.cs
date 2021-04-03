@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using StatelessIdentity.Domain.Exceptions;
+﻿using StatelessIdentity.Domain.Exceptions;
 using StatelessIdentity.UserProviders.Discord.RestClient.Models;
 using System;
 using System.Collections.Generic;

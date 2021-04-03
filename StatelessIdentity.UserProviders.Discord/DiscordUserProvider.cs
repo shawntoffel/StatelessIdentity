@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using StatelessIdentity.Domain;
+﻿using StatelessIdentity.Domain;
 using StatelessIdentity.UserProviders.Discord.RestClient;
 using System;
 using System.Collections.Generic;
@@ -17,8 +16,6 @@ namespace StatelessIdentity.UserProviders.Discord
         {
             _restClient = new DiscordRestClient(options);
         }
-
-        public DiscordUserProvider(IOptions<DiscordUserProviderOptions> options) : this(options.Value) { }
 
         public DiscordUserProvider(IDiscordRestClient restClient)
         {

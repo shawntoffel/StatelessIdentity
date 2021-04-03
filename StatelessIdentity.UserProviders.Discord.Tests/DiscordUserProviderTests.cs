@@ -75,12 +75,15 @@ namespace StatelessIdentity.UserProviders.Discord.Tests
 
             var serviceProvider = new ServiceCollection()
                 .AddOptions()
-                .Configure<DiscordUserProviderOptions>((s) => configuration.GetSection(DiscordUserProviderOptions.ConfigurationSection).Bind(s))
-                .AddTransient<IUserProvider, DiscordUserProvider>()
-                .BuildServiceProvider();
+                .Configure<DiscordUserProviderOptions>((s) => 
+                    configuration.GetSection(DiscordUserProviderOptions.ConfigurationSection).Bind(s))
+                .AddTransient<IUserProvider, DiscordUserProvider>(provider => {
+                    var options = provider.GetRequiredService<IOptions<DiscordUserProviderOptions>>();
+                    Assert.AreEqual(expectedClientId, options.Value.ClientId);
 
-            var options = serviceProvider.GetService<IOptions<DiscordUserProviderOptions>>();
-            Assert.AreEqual(expectedClientId, options.Value.ClientId);
+                    return new DiscordUserProvider(options.Value);
+                })
+                .BuildServiceProvider();
 
             var userProvider = serviceProvider.GetService<IUserProvider>();
             Assert.NotNull(userProvider);
